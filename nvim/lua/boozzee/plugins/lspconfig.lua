@@ -1,14 +1,11 @@
-local map = vim.keymap.set
-local opts = { noremap=true, silent=true }
+local lspconfig = require('lspconfig')
+local util = require('lspconfig/util')
 
--- удалить ошибки диагностики в левом столбце (SignColumn)
-vim.diagnostic.config({signs=false})
-
--- стандартные горячие клавиши для работы с диагностикой
-map('n', '<leader>e', vim.diagnostic.open_float, opts)
-map('n', '[d', vim.diagnostic.goto_prev, opts)
-map('n', ']d', vim.diagnostic.goto_next, opts)
-map('n', '<leader>q', vim.diagnostic.setloclist, opts)
+local function config(_config)
+  return vim.tbl_deep_extend('force', {
+    capabilities = require('cmp_nvim_lsp').default_capabilities(vim.lsp.protocol.make_client_capabilities()),
+  }, _config or {})
+end
 
 local on_attach = function(client, bufnr)
   vim.api.nvim_buf_set_option(bufnr, 'omnifunc', 'v:lua.vim.lsp.omnifunc')
@@ -34,59 +31,33 @@ local on_attach = function(client, bufnr)
   map('n', '<leader>f', vim.lsp.buf.formatting, bufopts)
 end
 
--- инициализация LSP для различных ЯП
-local lspconfig = require('lspconfig')
-local util = require('lspconfig/util')
 
-local function config(_config)
-  return vim.tbl_deep_extend('force', {
-    capabilities = require('cmp_nvim_lsp').default_capabilities(vim.lsp.protocol.make_client_capabilities()),
-  }, _config or {})
-end
-
--- иницализация gopls LSP для Go
--- https://github.com/golang/tools/blob/master/gopls/doc/vim.md#neovim-install
-lspconfig.gopls.setup(config({
+lspconfig["gopls"].setup({
+  capabilities = capabilities,
   on_attach = on_attach,
-  cmd = { 'gopls', 'serve' },
-  filetypes = { 'go', 'go.mod' },
-  root_dir = util.root_pattern('go.work', 'go.mod', '.git'),
   settings = {
     gopls = {
+      directoryFilters = { "-.git", "-node_modules" },
       analyses = {
         unusedparams = true,
-        shadow = true,
+        unusedvariable = true,
+        unusedwrite = true,
+        fieldalignment = true,
+        nilness = true,
+        useany = true,
+      },
+      codelenses = {
+        generate = true,
+        run_govulncheck = true,
+        tidy = true,
+        upgrade_dependency = true,
+      },
+      hints = {
+        constantValues = true
       },
       staticcheck = true,
-    }
-  }
-}))
-
-local cmp = require('cmp')
-
-local source_mapping = {
-  buffer = '[Buffer]',
-  nvim_lsp = '[LSP]',
-  nvim_lua = '[Lua]',
-  cmp_tabnine = '[TN]',
-  path = '[Path]',
-}
-
-cmp.setup({
-  mapping = cmp.mapping.preset.insert({
-    ['<C-y>'] = cmp.mapping.confirm({ select = true }),
-    ['<C-d>'] = cmp.mapping.scroll_docs(-4),
-    ['<C-u>'] = cmp.mapping.scroll_docs(4),
-    ['<C-Space>'] = cmp.mapping.complete(),
-  }),
-  sources = cmp.config.sources({
-    { name = 'cmp_tabnine' },
-    { name = 'nvim_lsp' },
-  }, {
-    { name = 'buffer' },
-  })
+      gofumpt = true,
+      semanticTokens = true,
+    },
+  },
 })
-
--- инициализация LSP для различных ЯП
-local lspconfig = require('lspconfig')
-
