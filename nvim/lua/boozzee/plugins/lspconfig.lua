@@ -102,4 +102,3 @@ lspconfig.gopls.setup{
         end,
     },
 }
-
