@@ -3,6 +3,10 @@ vim.g.mapleader = " "
 
 local keymap = vim.keymap -- for conciseness
 
+-- return back
+keymap.set('n', '<C-t>', '<C-o>', { noremap = true, silent = true })
+
+
 -- window management
 keymap.set("n", "<leader>sv", "<C-w>v") -- split window vertically
 keymap.set("n", "<leader>sh", "<C-w>s") -- split window horizontally

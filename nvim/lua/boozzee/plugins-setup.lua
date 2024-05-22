@@ -41,31 +41,47 @@ packer.init({
 
 -- Install your plugins here
 return packer.startup(function(use)
-	use ("wbthomason/packer.nvim") -- Have packer manage itself	
+    use ("wbthomason/packer.nvim") -- Have packer manage itself	
   
-  use("savq/melange-nvim") -- color scheme
-  use("nvim-tree/nvim-tree.lua")
-  use {
+    use("savq/melange-nvim") -- color scheme
+
+    use("nvim-tree/nvim-tree.lua")
+    use {
     'nvim-telescope/telescope.nvim', tag = '0.1.6',
      requires = { {'nvim-lua/plenary.nvim'} }
-  }
-  use { 'nvim-telescope/telescope-fzf-native.nvim', run = 'make' }
+    }
+    use { 'nvim-telescope/telescope-fzf-native.nvim', run = 'make' }
 
-  -- набор Lua функций, используется как зависимость в большинстве
-  -- плагинов, где есть работа с асинхронщиной
-  use('nvim-lua/plenary.nvim')
+    -- набор Lua функций, используется как зависимость в большинстве
+    -- плагинов, где есть работа с асинхронщиной
+    -- use('nvim-lua/plenary.nvim')
+    use('sainnhe/gruvbox-material')
 
-  -- autocomplete
-  use("hrsh7th/nvim-cmp")
-  use("hrsh7th/cmp-nvim-lsp")
-  use("hrsh7th/cmp-buffer")
-  use("hrsh7th/cmp-path")
+    use("numToStr/Comment.nvim")
 
-  -- lsp
-  use("williamboman/mason.nvim")
-  use("williamboman/mason-lspconfig.nvim")
-  use("neovim/nvim-lspconfig")
+    -- autocomplete
+    use("hrsh7th/nvim-cmp")
+    use("hrsh7th/cmp-nvim-lsp")
+    use("hrsh7th/cmp-buffer")
+    use("hrsh7th/cmp-path")
 
+    -- lsp
+    use("williamboman/mason.nvim")
+    use("williamboman/mason-lspconfig.nvim")
+    use("neovim/nvim-lspconfig")
+    use({
+        "glepnir/lspsaga.nvim",
+        branch = "main",
+        requires = {
+          { "nvim-treesitter/nvim-treesitter" },
+        },
+    }) 
+
+    use("antosha417/nvim-lsp-file-operations")
+    use("folke/neodev.nvim")
+
+    -- git
+    use("lewis6991/gitsigns.nvim")
 
 	if PACKER_BOOTSTRAP then
 		require("packer").sync()
